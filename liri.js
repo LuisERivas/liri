@@ -1,97 +1,62 @@
-var inquirer = require(`inquirer`)
+//global values
 
-class searchInput{
-    constructor(searchCriteria){
-        this.searchCriteria=searchCriteria;
-    }
-}
+typeOfSearch = process.argv[2]
+console.log(typeOfSearch)
+searchCriteria = process.argv.slice(3).join("")
+console.log(searchCriteria)
 
+promptSelection(typeOfSearch)
+// functions
 
-askForUserInput()
-
-
-
-//function asking for input from user
-
-function askForUserInput(){
-    inquirer.prompt([
-        {
-            type: `list`,
-            message: `What do you want to do?`,
-            choices: [`Search for concerts`,`Search for song on spotify`,`Search for movie information`, `Random`],
-            name: `userSelectedTask`
-        },
-        {
-            type: `confirm`,
-            message: `are you sure about that?`,
-            name: `confirm`,
-            default: true
+function promptSelection(testingSearchType){
+    switch(testingSearchType){
+        case "spotify-this":
+        //test spotify-this was typed
+        console.log(`***************************
+                    \n**Spotify-this was chosen**
+                    \n***************************`)
+        //if title was chosen            
+        if (searchCriteria){
+            //run api pull
+            spotifyApi(searchCriteria)
         }
-    ])
-    .then(function(inquirerResponse){
-    if(inquirerResponse.confirm){
-        console.log(`---------------------------------------`)
-        console.log(`you have chosen to: ${inquirerResponse.userSelectedTask}`)
-        console.log(`---------------------------------------`)
-        var input= inquirerResponse.userSelectedTask
-        userSelectedTaskInput(input)
+        // if title was not chosen
+        else if(!searchCriteria){
+            spotifyApi("The Sign Ace of Base")
+            //console.log(`you suck`)
+        }          
+        break;
+        case "concert-this":
+        //spotifyApi();
+        //test concert-this was typed
+        console.log(`***************************
+                    \n**Concert-this was chosen**
+                    \n***************************`)
+        break;
+        case "movie-this":
         
-    }
-    })
-}
-
-
-// function that will ask user to input what they are looking for 
-function userSelectedTaskInput(input){
-    if(input=== `Search for concerts`){
-        console.log(`this is testing that you chose Search for Concerts`)
-        inputCreation()
-    }
-    else if(input=== `Search for song on spotify`){
-        console.log(`this is testing that you chose Search for song`)
-        inputCreation()
-    }
-    else if(input=== `Search for movie information`){
-        console.log(`this is testing that you chose Search for movie`)
-        inputCreation()
-    }
-    else if(input==="Random"){
-        console.log(`this is testing that you chose Search for Random`)
-          
-    }
-    else{
-        console.log(`you suck...`)
+        //test movie-this was typed
+        console.log(`***************************
+                    \n***movie-this was chosen***
+                    \n***************************`)
+        break;
+        case "do-this":
+        //spotifyApi();
+        //test do-this was typed
+        console.log(`***************************
+                    \n**do-this was chosen**
+                    \n***************************`)
+        break;
+        default:
+        console.log(`*************************
+                    \n**que quieres que haga?**
+                    \n*************************`)
     }
 }
 
-function inputCreation(){
-    inquirer.prompt([
-        {
-            type: `input`,
-            message: `What do you want to search up?`,
-            name: `userSelectedSearch`
-        },
-        {
-            type: `confirm`,
-            message: `are you sure about that?`,
-            name: `confirm`,
-            default: true
-        }
-    ])
-    .then(function(inquirerResponse){
-    if(inquirerResponse.confirm){
-        console.log(`---------------------------------------`)
-        var inputedSearch= inquirerResponse.userSelectedSearch
-        console.log(`-------------${inputedSearch}----------`)
-        //inputedSearchCritera = new searchInput (inquirerResponse.userSelectedSearch)
-        //console.log(` testing the object creation of the inputed search criteria: ${this.inputedSearchCritera}`)
-    }
-    
-    })
-    
-
+function spotifyApi(objectToSearch){
+    console.log(`\n
+                ******* Searching Database *******
+                \n`)
+    console.log(searchCriteria)
 }
-    
-
-    
-
