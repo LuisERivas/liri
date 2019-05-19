@@ -1,3 +1,7 @@
+//required things
+require("dotenv").config()
+var Spotify = require('node-spotify-api');
+var keys = require('./keys');
 //global values
 
 typeOfSearch = process.argv[2]
@@ -58,5 +62,16 @@ function spotifyApi(objectToSearch){
     console.log(`\n
                 ******* Searching Database *******
                 \n`)
-    console.log(searchCriteria)
+    //console.log(searchCriteria)
+    var spotify = new Spotify(keys.spotify);
+    spotify.search({
+        type:'track',
+        query: objectToSearch || "The Sign Ace of Base", function(err, data){
+            if (err){
+                console.log(`..............dude there was an error.........`)
+                return console.log(`Error Occured: ` + err)
+            }
+            console.log(data.name);
+        }
+})
 }
