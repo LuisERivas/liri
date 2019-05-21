@@ -2,6 +2,7 @@
 require("dotenv").config()
 var Spotify = require('node-spotify-api');
 var keys = require('./keys');
+const fs = require('fs');
 //global values
 
 typeOfSearch = process.argv[2]
@@ -64,14 +65,31 @@ function spotifyApi(objectToSearch){
                 \n`)
     //console.log(searchCriteria)
     var spotify = new Spotify(keys.spotify);
-    spotify.search({
-        type:'track',
-        query: objectToSearch || "The Sign Ace of Base", function(err, data){
+
+    spotify.search({type:'track', query: objectToSearch || "The Sign Ace of Base"}, function(err, response){
             if (err){
                 console.log(`..............dude there was an error.........`)
                 return console.log(`Error Occured: ` + err)
             }
-            console.log(data.name);
-        }
-})
+            //console.log(data[0].name);
+            for(let data of response.tracks.items){
+                let songData=[
+                    `Artist: ${data.artists[0].name}`,
+                    `Track: ${data.name}`,
+                    `URL: ${data.external_urls.spotify}`,
+                    `Album: ${data.album.name}`,
+                ]//.join(`\n\n`)
+                
+                console.log(songData)
+                fs.appendFile('log.txt', songData, function(err){
+                    if(err){
+                        console.log(err)
+                    }
+                    else {
+                        console.log('content added dudee!!!')
+                    }
+                })
+            }
+            
+        })
 }
