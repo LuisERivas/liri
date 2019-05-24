@@ -3,6 +3,7 @@ require("dotenv").config()
 var Spotify = require('node-spotify-api');
 var keys = require('./keys');
 const fs = require('fs');
+const axios = require('axios');
 //global values
 
 typeOfSearch = process.argv[2]
@@ -32,11 +33,11 @@ function promptSelection(testingSearchType){
         }          
         break;
         case "concert-this":
-        //spotifyApi();
+        concertApi(searchCriteria);
         //test concert-this was typed
-        console.log(`***************************
-                    \n**Concert-this was chosen**
-                    \n***************************`)
+       // console.log(`***************************
+       //             \n**Concert-this was chosen**
+       //             \n***************************`)
         break;
         case "movie-this":
         
@@ -66,7 +67,7 @@ function spotifyApi(objectToSearch){
     //console.log(searchCriteria)
     var spotify = new Spotify(keys.spotify);
 
-    spotify.search({type:'track', query: objectToSearch || "The Sign Ace of Base"}, function(err, response){
+    spotify.search({type:'track', query: objectToSearch || "The Sign Ace of Base", limit: 1}, function(err, response){
             if (err){
                 console.log(`..............dude there was an error.........`)
                 return console.log(`Error Occured: ` + err)
@@ -92,4 +93,33 @@ function spotifyApi(objectToSearch){
             }
             
         })
+}
+// app id no longer works, unable to format and test
+function concertApi(objectToSearch){
+    axios
+    .get('https://rest.bandsintown.com/artists/'+objectToSearch +'/events?app_id=codingbootcamp&date=upcoming')
+    .then(function(response){
+
+        console.log(response)
+    })
+    .catch(function(error){
+        if (error.response){
+            console.log(error.response.data)
+            console.log(error.response.status)
+            console.log(error.response.headers)
+        }
+        else if(error.request){
+            console.log(error.request)
+        }
+        else{
+            console.log('Error happend',error.message)
+        }
+        console.log(error.config)
+    })
+
+}
+
+function concertApi(objectToSearch){
+    axios
+        .get('http://www.omdbapi.com/?t=' + objectToSearch + '&plot=short&apikey=trilogy')
 }
