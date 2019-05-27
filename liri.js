@@ -2,6 +2,8 @@
 require("dotenv").config()
 var Spotify = require('node-spotify-api');
 var keys = require('./keys');
+const fs = require('fs');
+const axios = require('axios');
 //global values
 
 typeOfSearch = process.argv[2]
@@ -31,11 +33,11 @@ function promptSelection(testingSearchType){
         }          
         break;
         case "concert-this":
-        //spotifyApi();
+        concertApi(searchCriteria);
         //test concert-this was typed
-        console.log(`***************************
-                    \n**Concert-this was chosen**
-                    \n***************************`)
+       // console.log(`***************************
+       //             \n**Concert-this was chosen**
+       //             \n***************************`)
         break;
         case "movie-this":
         
@@ -64,14 +66,60 @@ function spotifyApi(objectToSearch){
                 \n`)
     //console.log(searchCriteria)
     var spotify = new Spotify(keys.spotify);
-    spotify.search({
-        type:'track',
-        query: objectToSearch || "The Sign Ace of Base", function(err, data){
+
+    spotify.search({type:'track', query: objectToSearch || "The Sign Ace of Base", limit: 1}, function(err, response){
             if (err){
                 console.log(`..............dude there was an error.........`)
                 return console.log(`Error Occured: ` + err)
             }
-            console.log(data.name);
+            //console.log(data[0].name);
+            for(let data of response.tracks.items){
+                let songData=[
+                    `Artist: ${data.artists[0].name}`,
+                    `Track: ${data.name}`,
+                    `URL: ${data.external_urls.spotify}`,
+                    `Album: ${data.album.name}`,
+                ]//.join(`\n\n`)
+                
+                console.log(songData)
+                fs.appendFile('log.txt', songData, function(err){
+                    if(err){
+                        console.log(err)
+                    }
+                    else {
+                        console.log('content added dudee!!!')
+                    }
+                })
+            }
+            
+        })
+}
+// app id no longer works, unable to format and test
+function concertApi(objectToSearch){
+    axios
+    .get('https://rest.bandsintown.com/artists/'+objectToSearch +'/events?app_id=codingbootcamp&date=upcoming')
+    .then(function(response){
+
+        console.log(response)
+    })
+    .catch(function(error){
+        if (error.response){
+            console.log(error.response.data)
+            console.log(error.response.status)
+            console.log(error.response.headers)
         }
-})
+        else if(error.request){
+            console.log(error.request)
+        }
+        else{
+            console.log('Error happend',error.message)
+        }
+        console.log(error.config)
+    })
+
+}
+
+function concertApi(objectToSearch){
+    axios
+        .get('http://www.omdbapi.com/?t=' + objectToSearch + '&plot=short&apikey=trilogy')
 }
